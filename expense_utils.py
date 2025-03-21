@@ -152,7 +152,7 @@ def plot(x, y, type, filepath):
 
 
 def preprocess(df, month_idx):
-    df = df.drop(["Value Dat", "Chq/Ref Number   ", "Closing Balance"], axis=1)
+    df = df.drop(["Value Date", "Chq/Ref Number", "Closing Balance"], axis=1)
     df.columns = ["date", "description", "debit", "credit"]
     df["date"] = [x.strip() for x in df["date"]]
     df["date"] = pd.to_datetime(df["date"], format='%d/%m/%y')
