@@ -11,6 +11,8 @@ Website : [Expense Manager App](https://ai-powered-expense-tracker-mandar-sk.str
 * Select Account number, period and format as Delimited
 * Finally save as type as "All Files" and name it as filename.csv
 
+## You can also use demo dataset under data/ folder
+
 ## Screenshots
 
 ![1705837112988](image/README/1705837112988.png)
