@@ -152,10 +152,20 @@ def plot(x, y, type, filepath):
 
 
 def preprocess(df, month_idx):
-    df = df.drop(["Value Date", "Chq/Ref Number", "Closing Balance"], axis=1)
-    df.columns = ["date", "description", "debit", "credit"]
-    df["date"] = [x.strip() for x in df["date"]]
-    df["date"] = pd.to_datetime(df["date"], format='%d/%m/%y')
+    # Only drop columns that exist in the dataset
+    drop_cols = ["Value Dat", "Chq/Ref Number   ", "Closing Balance"]
+    df = df.drop(columns=[col for col in drop_cols if col in df.columns], errors='ignore')
+
+    df.columns = ["date", "description", "debit", "credit"][:len(df.columns)]  # Handle unexpected column variations
+
+    # Clean and parse dates
+    df["date"] = df["date"].astype(str).str.strip()
+    df["date"] = df["date"].apply(parse_date_flexibly)
+
+    # Handle missing values in debit & credit columns
+    df["debit"] = df["debit"].fillna(0)
+    df["credit"] = df["credit"].fillna(0)
+
     df["month"] = df["date"].dt.strftime("%B %Y")
     if month_idx != 0:
         df = df[df["date"].dt.month == month_idx]
@@ -166,6 +176,7 @@ def preprocess(df, month_idx):
     df = get_category(df, "data/data.json")
 
     return df
+
 
 
 def get_dataframes(df, month_idx):
