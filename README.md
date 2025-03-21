@@ -2,7 +2,7 @@
 
 Categorization of expense from account statement
 
-Website : [Expense Manager App](https://anirudh1905-expense-manager-main-vsixm8.streamlit.app/)
+Website : [Expense Manager App](https://ai-powered-expense-tracker-mandar-sk.streamlit.app/)
 
 ## How to download HDFC Bank statements as CSV
 
@@ -24,3 +24,16 @@ Website : [Expense Manager App](https://anirudh1905-expense-manager-main-vsixm8.
 You can also download the categorized expense output csv by clicking on `Download CSV` button.
 
 ***Note:** Currently only works for HDFC bank statements*
+
+## 🖥️ Installation & Running Locally
+
+### 🔧 Requirements
+- Python 3.9
+- Creat an environment
+
+### ▶️ Run the app
+streamlit run streamlit_app.py
+
+### 📦 Install dependencies
+```bash
+pip install -r requirements.txt
