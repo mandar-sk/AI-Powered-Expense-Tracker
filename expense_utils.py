@@ -152,11 +152,25 @@ def plot(x, y, type, filepath):
 
 
 def preprocess(df, month_idx):
-    # Only drop columns that exist in the dataset
-    drop_cols = ["Value Dat", "Chq/Ref Number   ", "Closing Balance"]
-    df = df.drop(columns=[col for col in drop_cols if col in df.columns], errors='ignore')
+    # Define expected mappings based on actual CSV format
+    rename_mapping = {
+        "Date": "date",
+        "narration": "description",
+        "Debit Amount": "debit",
+        "Credit Amount": "credit"
+    }
 
-    df.columns = ["date", "description", "debit", "credit"][:len(df.columns)]  # Handle unexpected column variations
+    # Rename columns if they exist in the dataset
+    df = df.rename(columns=rename_mapping)
+
+    # Drop unnecessary columns if they exist
+    drop_cols = ["Value Date", "Chq/Ref Number", "Closing Balance"]
+    df = df.drop(columns=[col for col in drop_cols if col in df.columns], errors="ignore")
+
+    # Ensure only expected columns exist
+    required_cols = ["date", "description", "debit", "credit"]
+    if not all(col in df.columns for col in required_cols):
+        raise ValueError(f"Missing required columns! Found: {df.columns.tolist()}")
 
     # Clean and parse dates
     df["date"] = df["date"].astype(str).str.strip()
@@ -176,6 +190,7 @@ def preprocess(df, month_idx):
     df = get_category(df, "data/data.json")
 
     return df
+
 
 
 
