@@ -149,6 +149,13 @@ def plot(x, y, type, filepath):
 
     # plt.savefig(filepath+type+".png", bbox_inches='tight')
     # plt.show()
+def parse_date_flexibly(date_str):
+    for fmt in ("%d/%m/%y", "%d-%m-%Y", "%Y-%m-%d"):
+        try:
+            return pd.to_datetime(date_str, format=fmt)
+        except:
+            continue
+    return pd.NaT  # If all formats fail
 
 
 def preprocess(df, month_idx):
