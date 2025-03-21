@@ -48,37 +48,40 @@ def chk(x):
 def get_descriptions(df):
     user_info = []
     info = []
+
     for i in range(len(df)):
-        if df.loc[i, "type"] == "UPI":
-            tmp = str(df.loc[i, "description"]).rstrip(" ").split("-")
-            msg = tmp[-1]
-            if msg[:3] == "UPI":
+        desc = str(df.loc[i, "description"]).strip() if pd.notna(df.loc[i, "description"]) else ""
+        txn_type = df.loc[i, "type"]
+
+        if txn_type == "UPI":
+            tmp = desc.split("-")
+            msg = tmp[-1] if len(tmp) >= 1 else "UPI"
+            if msg[:3].upper() == "UPI":
                 msg = "UPI"
             user_info.append(msg)
-            info.append(tmp[1])
+            info.append(tmp[1] if len(tmp) > 1 else msg)  # SAFE access
 
-        elif df.loc[i, "type"] == "Card":
-            tmp = str(df.loc[i, "description"]).rstrip(" ").split(" ")
-            tmp = tmp[2:]
-            msg = " "
-            msg = msg.join(tmp)
-            msg = msg.rstrip(" ")
+        elif txn_type == "Card":
+            tmp = desc.split(" ")
+            tmp = tmp[2:] if len(tmp) > 2 else []
+            msg = " ".join(tmp).strip()
             user_info.append("Card")
-            info.append(msg)
+            info.append(msg if msg else "Card")
 
-        elif df.loc[i, "type"] == "Refund":
+        elif txn_type == "Refund":
             if df.loc[i, "credit"] == 0.0:
                 df.loc[i, "type"] = "Others"
             user_info.append("Others")
-            info.append(df.loc[i, "type"])
+            info.append("Others")
 
         else:
             user_info.append("Others")
-            info.append(df.loc[i, "type"])
+            info.append(txn_type)
 
     df["info"] = info
     df["msg"] = user_info
     return df
+
 
 
 def get_category(df, path):
