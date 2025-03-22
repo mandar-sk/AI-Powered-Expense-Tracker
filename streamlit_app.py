@@ -26,7 +26,7 @@ with header:
 
 with data:
     # username = st.text_input('Enter username')
-    uploaded_file = st.file_uploader("Upload your bank statement here (Only CSV)")
+    uploaded_file = st.file_uploader("Upload your bank statement (CSV only)")
     months = [
         "All",
         "January",
@@ -42,7 +42,7 @@ with data:
         "November",
         "December",
     ]
-    option = st.selectbox("Enter month for which u want ot see the analysis", months, 0)
+    option = st.selectbox("Monthwise Analysis", months, 0)
     month_idx = months.index(option)
     flag = False
     if uploaded_file is not None and uploaded_file.name[-3:] != "csv":
