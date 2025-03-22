@@ -11,7 +11,9 @@ Website : [Expense Manager App](https://ai-powered-expense-tracker-mandar-sk.str
 * Select Account number, period and format as Delimited
 * Finally save as type as "All Files" and name it as filename.csv
 
-## You can also use demo dataset under data/ folder
+## You can also use the provided demo dataset under folder named data
+* demo_bank_dataset.csv - Contains financial transactions from a UPI enabled bank account
+* demo_bank_dataset2.csv - Contains financial transactions of a Salary account
 
 ## Screenshots
 
