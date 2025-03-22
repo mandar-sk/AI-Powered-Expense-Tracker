@@ -9,23 +9,16 @@ warnings.filterwarnings("ignore")
 
 def chk(x):
     if x[:3] == "UPI":
-        if (
-            ("REFUND" in x)
-            or ("UPIRET" in x)
-            or ("REV-UPI" == x[:7])
-            or ("REVERS" in x)
-            or ("RRR" in x)
-        ):
+        if any(term in x for term in ["REFUND", "UPIRET", "REV-UPI", "REVERS", "RRR"]):
             return "Refund"
+        # Extract merchant or recipient info from UPI transactions
+        upi_parts = x.split("/")
+        if len(upi_parts) > 3:
+            merchant_info = upi_parts[-1]
+            return merchant_info  # Return more meaningful transaction info
         return "UPI"
-    elif (
-        ("REFUND" in x)
-        or ("UPIRET" in x)
-        or ("REV-UPI" == x[:7])
-        or ("REVERS" in x)
-        or ("RRR" in x)
-        or ("CRV" in x)
-    ):
+    
+    elif any(term in x for term in ["REFUND", "UPIRET", "REV-UPI", "REVERS", "RRR", "CRV"]):
         return "Refund"
     elif x[:3] == "ATW":
         return "ATM"
@@ -45,6 +38,7 @@ def chk(x):
         return "Others"
 
 
+
 def get_descriptions(df):
     user_info = []
     info = []
@@ -59,7 +53,7 @@ def get_descriptions(df):
             if msg[:3].upper() == "UPI":
                 msg = "UPI"
             user_info.append(msg)
-            info.append(tmp[1] if len(tmp) > 1 else msg)  # SAFE access
+            info.append(tmp[1] if len(tmp) > 1 else msg)
 
         elif txn_type == "Card":
             tmp = desc.split(" ")
@@ -83,40 +77,34 @@ def get_descriptions(df):
     return df
 
 
-
 def get_category(df, path):
-    f = open(path, "r")
-    data = json.load(f)
-    tmp = list(data.keys())
+    with open(path, "r") as f:
+        data = json.load(f)
+    
     category = []
     sub_category = []
+    tmp = list(data.keys())
 
     for i in range(len(df)):
         info = str(df.loc[i, "info"])
         msg = str(df.loc[i, "msg"])
 
-        if msg == "UPI" or msg == "Card" or msg == "Others":
-            t1 = process.extract(info, tmp)
-            t_key, t_conf, t_data = t1[0][0], t1[0][1], info
-        else:
-            t1 = process.extract(info, tmp)
-            t2 = process.extract(msg, tmp)
-            t1_key, t1_conf = t1[0][0], t1[0][1]
-            t2_key, t2_conf = t2[0][0], t2[0][1]
-            t_key, t_conf, t_data = (
-                [t1_key, t1_conf, info] if t1_conf > t2_conf else [t2_key, t2_conf, msg]
-            )
+        # Match against both UPI and other descriptions
+        t1 = process.extract(info, tmp)
+        t2 = process.extract(msg, tmp)
 
-        if t_conf > 70:
-            category.append(data[t_key])
-            sub_category.append(t_key)
+        t1_key, t1_conf = t1[0][0], t1[0][1]
+        t2_key, t2_conf = t2[0][0], t2[0][1]
+
+        if t1_conf > 70:
+            category.append(data[t1_key])
+            sub_category.append(t1_key)
+        elif t2_conf > 70:
+            category.append(data[t2_key])
+            sub_category.append(t2_key)
         else:
-            if msg == "UPI" or msg == "Card":
-                category.append(msg + " Transfer")
-                sub_category.append(msg + " Transfer")
-            else:
-                category.append("Others")
-                sub_category.append("Others")
+            category.append("Others")
+            sub_category.append("Others")
 
     df["sub_category"] = sub_category
     df["category"] = category
@@ -152,6 +140,7 @@ def plot(x, y, type, filepath):
 
     # plt.savefig(filepath+type+".png", bbox_inches='tight')
     # plt.show()
+
 def parse_date_flexibly(date_str):
     for fmt in ("%d/%m/%y", "%d-%m-%Y", "%Y-%m-%d"):
         try:
@@ -160,28 +149,10 @@ def parse_date_flexibly(date_str):
             continue
     return pd.NaT  # If all formats fail
 
-
 def preprocess(df, month_idx):
-    # Define expected mappings based on actual CSV format
-    rename_mapping = {
-        "Date": "date",
-        "narration": "description",
-        "Debit Amount": "debit",
-        "Credit Amount": "credit"
-    }
-
-    # Rename columns if they exist in the dataset
-    df = df.rename(columns=rename_mapping)
-
-    # Drop unnecessary columns if they exist
-    drop_cols = ["Value Date", "Chq/Ref Number", "Closing Balance"]
-    df = df.drop(columns=[col for col in drop_cols if col in df.columns], errors="ignore")
-
-    # Ensure only expected columns exist
-    required_cols = ["date", "description", "debit", "credit"]
-    if not all(col in df.columns for col in required_cols):
-        raise ValueError(f"Missing required columns! Found: {df.columns.tolist()}")
-
+    df = df.drop(["Value Dat", "Chq/Ref Number   ", "Closing Balance"], axis=1)
+    df.columns = ["date", "description", "debit", "credit"]
+    
     # Clean and parse dates
     df["date"] = df["date"].astype(str).str.strip()
     df["date"] = df["date"].apply(parse_date_flexibly)
@@ -200,8 +171,6 @@ def preprocess(df, month_idx):
     df = get_category(df, "data/data.json")
 
     return df
-
-
 
 
 def get_dataframes(df, month_idx):
