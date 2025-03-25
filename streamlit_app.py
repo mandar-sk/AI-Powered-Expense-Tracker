@@ -93,7 +93,7 @@ with viz:
     if flag:
         st.header("Data Visualizations")
 
-        st.warning("💰 Total Debit: " + str(format_currency(df_sum.loc[0, "Sum"], "INR", locale="en_IN")))
+        st.error("💰 Total Debit: " + str(format_currency(df_sum.loc[0, "Sum"], "INR", locale="en_IN")))
         st.success("💰 Total Credit: " + str(format_currency(df_sum.loc[1, "Sum"], "INR", locale="en_IN")))
 
         fig = px.line(
