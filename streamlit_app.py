@@ -101,10 +101,10 @@ with viz:
             x="date",
             y="amount",
             color="transaction_type",
-            title="Daily Transaction Trends (Credit vs Debit)",
+            title="Transaction type wise Debit",
             labels={"date": "Date"},
             custom_data=[amount_df["category"], amount_df["sub_category"]],
-            color_discrete_map={"Credit": "green", "Debit": "red"}
+            color_discrete_map={"credit": "green", "debit": "red"}
         )
         hovertemp = "<b>Date: </b> %{x} <br>"
         hovertemp += "<b>Amount: </b> %{y} <br>"
@@ -121,7 +121,7 @@ with viz:
             x="month",
             y="amount",
             color="transaction_type",
-            title="Credit and Debit Comparison Over Months",
+            title="Month wise Transaction",
             labels={"month": "Month"},
             barmode="group",
             custom_data=[amount_df["category"], amount_df["sub_category"]],
