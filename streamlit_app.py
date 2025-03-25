@@ -91,69 +91,88 @@ with data:
 
 with viz:
     if flag:
-        st.header("📊 Data Visualizations")
+        st.header("Data Visualizations")
 
-        # Highlight totals
-        st.success("✅ Total Debit: " + str(format_currency(df_sum.loc[0, "Sum"], "INR", locale="en_IN")))
-        st.info("💰 Total Credit: " + str(format_currency(df_sum.loc[1, "Sum"], "INR", locale="en_IN")))
+        st.warning("💰 Total Debit: " + str(format_currency(df_sum.loc[0, "Sum"], "INR", locale="en_IN")))
+         st.success("💰 Total Credit: " + str(format_currency(df_sum.loc[1, "Sum"], "INR", locale="en_IN")))
 
-        # Line Chart - inside expander
-        with st.expander("📈 Line Chart: Transaction Type Over Time", expanded=True):
-            fig = px.line(
-                amount_df,
-                x="date",
-                y="amount",
-                color="transaction_type",
-                title="Transaction Type Over Time",
-                labels={"date": "Date"},
-                custom_data=[amount_df["category"], amount_df["sub_category"]],
-                color_discrete_map={"credit": "green", "debit": "red"}
-            )
-            hovertemp = "<b>Date: </b> %{x} <br>"
-            hovertemp += "<b>Amount: </b> %{y} <br>"
-            hovertemp += "<b>Category: </b> %{customdata[0]} <br>"
-            hovertemp += "<b>Sub Category: </b> %{customdata[1]}"
-            fig.update_traces(hovertemplate=hovertemp)
-            st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+        fig = px.line(
+            amount_df,
+            x="date",
+            y="amount",
+            color="transaction_type",
+            title="Transaction type wise Debit",
+            labels={"date": "Date"},
+            custom_data=[amount_df["category"], amount_df["sub_category"]],
+            color_discrete_map={"credit": "green", "debit": "red"}
+        )
+        hovertemp = "<b>Date: </b> %{x} <br>"
+        hovertemp += "<b>Amount: </b> %{y} <br>"
+        hovertemp += "<b>Category: </b> %{customdata[0]} <br>"
+        hovertemp += "<b>Sub Category: </b> %{customdata[1]}"
+        fig.update_traces(hovertemplate=hovertemp)
+        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+        # fig = px.pie(df_sum,values='Sum',names='index',title="Debit vs Credit")
+        # fig.update_layout(title_x=0.43)
+        # st.plotly_chart(fig, theme="streamlit", use_container_width=True)
 
-        # Bar Chart - inside expander
-        with st.expander("📊 Bar Chart: Month-wise Transactions", expanded=False):
-            fig = px.bar(
-                amount_df,
-                x="month",
-                y="amount",
-                color="transaction_type",
-                title="Month-wise Transaction Overview",
-                labels={"month": "Month"},
-                barmode="group",
-                custom_data=[amount_df["category"], amount_df["sub_category"]],
-                color_discrete_map={"credit": "blue", "debit": "orange"}
-            )
-            fig.update_traces(hovertemplate=hovertemp)
-            st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+        fig = px.bar(
+            amount_df,
+            x="month",
+            y="amount",
+            color="transaction_type",
+            title="Month wise Transaction",
+            labels={"month": "Month"},
+            barmode="group",
+            custom_data=[amount_df["category"], amount_df["sub_category"]],
+            color_discrete_map={"credit": "blue", "debit": "orange"}
+        )
+        fig.update_traces(hovertemplate=hovertemp)
+        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
 
-        # Pie Charts
-        with st.expander("🧁 Pie Charts: Debit Breakdown", expanded=False):
-            left, right = st.columns(2)
+        left, right = st.columns(2)
+        fig_l = px.pie(
+            category_debit, values="debit", names="category", title="Categorywise Debit"
+        )
+        left.plotly_chart(fig_l, theme="streamlit", use_container_width=True)
 
-            fig_l = px.pie(category_debit, values="debit", names="category", title="Category-wise Debit")
-            left.plotly_chart(fig_l, theme="streamlit", use_container_width=True)
+        fig_l = px.pie(
+            sub_category_debit,
+            values="debit",
+            names="sub_category",
+            title="Sub Categorywise Debit",
+        )
+        left.plotly_chart(fig_l, theme="streamlit", use_container_width=True)
 
-            fig_l = px.pie(sub_category_debit, values="debit", names="sub_category", title="Sub Category-wise Debit")
-            right.plotly_chart(fig_l, theme="streamlit", use_container_width=True)
+        fig_l = px.pie(
+            type_debit,
+            values="debit",
+            names="type",
+            title="Transaction type wise Debit",
+        )
+        left.plotly_chart(fig_l, theme="streamlit", use_container_width=True)
 
-            fig_l = px.pie(type_debit, values="debit", names="type", title="Transaction Type-wise Debit")
-            left.plotly_chart(fig_l, theme="streamlit", use_container_width=True)
+        fig_r = px.pie(
+            category_credit,
+            values="credit",
+            names="category",
+            title="Categorywise Credit",
+        )
+        right.plotly_chart(fig_r, theme="streamlit", use_container_width=True)
 
-        with st.expander("🧁 Pie Charts: Credit Breakdown", expanded=False):
-            left, right = st.columns(2)
+        fig_r = px.pie(
+            sub_category_credit,
+            values="credit",
+            names="sub_category",
+            title="Sub Categorywise Credit",
+        )
+        right.plotly_chart(fig_r, theme="streamlit", use_container_width=True)
 
-            fig_r = px.pie(category_credit, values="credit", names="category", title="Category-wise Credit")
-            left.plotly_chart(fig_r, theme="streamlit", use_container_width=True)
-
-            fig_r = px.pie(sub_category_credit, values="credit", names="sub_category", title="Sub Category-wise Credit")
-            right.plotly_chart(fig_r, theme="streamlit", use_container_width=True)
-
-            fig_r = px.pie(type_credit, values="credit", names="type", title="Transaction Type-wise Credit")
-            left.plotly_chart(fig_r, theme="streamlit", use_container_width=True)
+        fig_r = px.pie(
+            type_credit,
+            values="credit",
+            names="type",
+            title="Transaction type wise Credit",
+        )
+        right.plotly_chart(fig_r, theme="streamlit", use_container_width=True)
 
