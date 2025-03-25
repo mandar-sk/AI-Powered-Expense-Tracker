@@ -120,7 +120,7 @@ with viz:
             amount_df,
             x="month",
             y="amount",
-            color="Transaction Type",
+            color="transaction_type",
             title="Credit and Debit Comparison Over Months",
             labels={"month": "Month"},
             barmode="group",
