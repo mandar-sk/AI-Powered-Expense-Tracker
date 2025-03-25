@@ -91,20 +91,20 @@ with data:
 
 with viz:
     if flag:
-        st.header("Data Visualizations")
+        st.header("Transactions Summary")
 
         st.error("💰 Total Debit: " + str(format_currency(df_sum.loc[0, "Sum"], "INR", locale="en_IN")))
         st.success("💰 Total Credit: " + str(format_currency(df_sum.loc[1, "Sum"], "INR", locale="en_IN")))
 
         fig = px.line(
             amount_df,
-            x="date",
-            y="amount",
-            color="transaction_type",
-            title="Transaction type wise Debit",
+            x="Date",
+            y="Amount",
+            color="Transaction Type",
+            title="Daily Transaction Trends (Credit vs Debit)",
             labels={"date": "Date"},
             custom_data=[amount_df["category"], amount_df["sub_category"]],
-            color_discrete_map={"credit": "green", "debit": "red"}
+            color_discrete_map={"Credit": "green", "Debit": "red"}
         )
         hovertemp = "<b>Date: </b> %{x} <br>"
         hovertemp += "<b>Amount: </b> %{y} <br>"
@@ -120,8 +120,8 @@ with viz:
             amount_df,
             x="month",
             y="amount",
-            color="transaction_type",
-            title="Month wise Transaction",
+            color="Transaction Type",
+            title="Credit and Debit Comparison Over Months",
             labels={"month": "Month"},
             barmode="group",
             custom_data=[amount_df["category"], amount_df["sub_category"]],
