@@ -7,7 +7,7 @@ from expense_utils import get_dataframes
 
 # from streamlit_extras.add_vertical_space import add_vertical_space
 
-st.set_page_config(page_title="Expense Manager App", layout="wide")
+st.set_page_config(page_title="AI-Powered Expense Tracker 📊", layout="wide")
 header = st.container()
 data = st.container()
 viz = st.container()
@@ -22,7 +22,9 @@ def get_tag(df, tag, transaction_type):
 
 
 with header:
-    st.title("Expense Manager")
+    st.markdown("<h1 style='text-align: center; color: #4CAF50;'>💸 AI-Powered Expense Tracker</h1>", unsafe_allow_html=True)
+    st.markdown("---")
+
 
 with data:
     # username = st.text_input('Enter username')
@@ -42,7 +44,7 @@ with data:
         "November",
         "December",
     ]
-    option = st.selectbox("Enter month for which u want ot see the analysis", months, 0)
+    option = st.selectbox("Enter month for which you want to see the analysis", months, 0)
     month_idx = months.index(option)
     flag = False
     if uploaded_file is not None and uploaded_file.name[-3:] != "csv":
@@ -81,7 +83,7 @@ with data:
 
         csv_file = df.to_csv(index=False)
         st.download_button(
-            label="Download Output CSV",
+            label="📥 Download Categorized Transactions CSV",
             data=csv_file,
             file_name="expense_output.csv",
             key="csv_button",
