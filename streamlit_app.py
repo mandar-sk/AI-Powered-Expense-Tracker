@@ -100,7 +100,7 @@ with viz:
             amount_df,
             x="date",
             y="amount",
-            color="Transaction Type",
+            color="transaction_type",
             title="Daily Transaction Trends (Credit vs Debit)",
             labels={"date": "Date"},
             custom_data=[amount_df["category"], amount_df["sub_category"]],
