@@ -22,9 +22,13 @@ def get_tag(df, tag, transaction_type):
 
 
 with header:
-    st.markdown("<h1 style='text-align: center; color: #4CAF50;'>💸 AI-Powered Expense Tracker</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>💸 AI-Powered Expense Tracker</h1>", unsafe_allow_html=True)
     st.markdown("---")
 
+with st.sidebar:
+    st.header("🔍 Filter Transactions")
+    uploaded_file = st.file_uploader("Upload your bank statement (CSV only)")
+    option = st.selectbox("Select Month", months, 0)
 
 with data:
     # username = st.text_input('Enter username')
