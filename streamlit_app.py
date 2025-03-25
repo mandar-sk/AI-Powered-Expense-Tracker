@@ -98,8 +98,8 @@ with viz:
 
         fig = px.line(
             amount_df,
-            x="Date",
-            y="Amount",
+            x="date",
+            y="amount",
             color="Transaction Type",
             title="Daily Transaction Trends (Credit vs Debit)",
             labels={"date": "Date"},
